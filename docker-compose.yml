@@ -1,14 +1,8 @@
-version: '3.8'
 services:
   web:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: stock_vsualizer_app
-    container_name: flask_app
+    build: .
     ports:
       - "5005:5000"
-    volumes:
-      - .:/app
     environment:
-      FLASK_DEBUG: "1"
+      ALPHAVANTAGE_API_KEY: ${ALPHAVANTAGE_API_KEY:-}
+      SECRET_KEY: ${SECRET_KEY:-}

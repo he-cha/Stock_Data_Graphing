@@ -5,15 +5,15 @@
     <title>Stock Data Visualizer</title>
     <script>
     document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById("time").addEventListener("change", function() {
-            if (this.value === "intra") {
-                document.getElementById("dates").style.display = "none";
-                document.getElementById("interval").style.display = "block"; 
-            }else { 
-                document.getElementById("dates").style.display = "block";
-                document.getElementById("interval").style.display = "none";  
-            }
-        });
+        function updateTimeFields() {
+        const intraday = document.getElementById("time").value === "intra";
+        ["start", "end"].forEach(id => { document.getElementById(id).required = !intraday; });
+        document.querySelector("select#interval").required = intraday;
+        document.getElementById("dates").style.display = intraday ? "none" : "block";
+        document.getElementById("interval-group").style.display = intraday ? "block" : "none";
+    }
+    document.getElementById("time").addEventListener("change", updateTimeFields);
+    updateTimeFields();
         document.querySelector("form").addEventListener("submit", function(event) {
         let time= document.getElementById("time").value;
         let symbol = document.getElementById("symbol").value;
@@ -58,10 +58,19 @@
             padding: 10px;
         }
 
+        body { max-width: 1100px; margin: 40px auto; padding: 0 24px; font-family: system-ui, sans-serif; color: #193449; background: #f3f6f8; }
+        .intro { text-align: center; color: #526675; }
+        form { padding: 28px; border-radius: 16px; background: white; box-shadow: 0 8px 32px #18334812; }
+        select, input, button { padding: 9px 12px; border: 1px solid #c3d0d8; border-radius: 6px; font: inherit; }
+        button { background: #176b75; color: white; cursor: pointer; }
+        .notice { padding: 16px; border-left: 4px solid #ae6424; background: #fff1df; }
+        #chart_cont { margin-top: 24px; }
     </style>
 </head>
 <body>
     <h1>Stock Data Visualizer</h1>
+    <p class="intro">Explore open, high, low and closing prices across time.</p>
+    {% for message in get_flashed_messages() %}<p class="notice" role="alert">{{ message }}</p>{% endfor %}
     <form method="post">
         <label for="symbol">Choose Symbol</label>
         <select id="symbol" name="symbol" required>
@@ -89,10 +98,10 @@
         <div id="dates">
             <label for="start">Start Date</label>
             <input type="date" id="start" name="start" required><br><br>
-            <label for="start">End Date</label>
+            <label for="end">End Date</label>
             <input type="date" id="end" name="end" required><br><br>
         </div>
-        <div id="interval">
+        <div id="interval-group">
             <label for="interval">Choose Interval</label>
             <select id="interval" name="interval" required>
                 <option value="1">1min</option>
